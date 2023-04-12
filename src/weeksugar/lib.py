@@ -12,7 +12,7 @@ def manifest_missing_message(path: str) -> str:
         f"oops, can't find {path}, for now you should do this first:\n"
     )
     msg_md5_manifest_missing.write(
-        "find DIRECTORY_PATH -type f -print0 | xargs -0 md5sum >{path}\n"
+        f"find DIRECTORY_PATH -type f -print0 | xargs -0 md5sum >{path}\n"
     )
     msg_md5_manifest_missing.write("\n")
     msg_md5_manifest_missing.write("will fix this later\n")
