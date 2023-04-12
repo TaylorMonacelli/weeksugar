@@ -1,8 +1,23 @@
 import io
+import logging
 import pathlib
 import re
 
-sums_path = pathlib.Path("/tmp/md5.txt")
+_logger = logging.getLogger(__name__)
+
+md5_manifest = pathlib.Path("/tmp/md5.txt")
+
+
+msg_md5_manifest_missing = io.StringIO()
+msg_md5_manifest_missing.write(
+    f"oops, can't find {md5_manifest}, for now you should do this first:\n"
+)
+msg_md5_manifest_missing.write(
+    "find DIRECTORY_PATH -type f -print0 | xargs -0 md5sum >{md5_manifest}\n"
+)
+msg_md5_manifest_missing.write("\n")
+msg_md5_manifest_missing.write("will fix this later\n")
+
 
 pat = re.compile(
     r"""
@@ -24,9 +39,13 @@ def write_bash(md5: str, vfile, to_delete: list[str], all: list[str]):
         vfile.write("\n")
 
 
-def main():
+def main() -> str:
+    if not md5_manifest.exists():
+        _logger.critical(msg_md5_manifest_missing.getvalue())
+        return ""
+
     dups = {}
-    for line in sums_path.read_text().splitlines():
+    for line in md5_manifest.read_text().splitlines():
         mo = pat.search(line)
         md5 = mo.group("md5sum")
         path = mo.group("path")
