@@ -6,7 +6,9 @@ import re
 _logger = logging.getLogger(__name__)
 
 
-def manifest_missing_message(path: str) -> str:
+def manifest_missing_message(path: str | pathlib.Path) -> str:
+    path = str(path)
+
     msg_md5_manifest_missing = io.StringIO()
     msg_md5_manifest_missing.write(
         f"oops, can't find {path}, for now you should do this first:\n"
