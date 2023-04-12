@@ -41,13 +41,13 @@ def write_bash(md5: str, vfile, to_delete: list[str], all: list[str]):
 
 
 def main(manifest_path: str) -> str:
-    path = pathlib.Path(manifest_path)
-    if not path.exists():
-        _logger.critical(manifest_missing_message(path))
+    manifest_path = pathlib.Path(manifest_path)
+    if not manifest_path.exists():
+        _logger.critical(manifest_missing_message(manifest_path))
         return ""
 
     dups = {}
-    for line in path.read_text().splitlines():
+    for line in manifest_path.read_text().splitlines():
         mo = pat.search(line)
         md5 = mo.group("md5sum")
         path = mo.group("path")
