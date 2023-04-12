@@ -29,15 +29,19 @@ pat = re.compile(
 )
 
 
-def write_bash(md5: str, vfile, to_delete: list[str], all: list[str]):
-    vfile.write(f"# these are duplicates with md5 {md5}\n")
-    for path in all:
-        vfile.write(f"# {path}\n")
+def write_bash(md5: str, bash, to_delete: list[str], all: list[str]):
+    bash.write("#!/usr/bin/env bash\n")
+    bash.write("\n")
+    bash.write(f"# {len(to_delete):,d} duplicates found\n")
 
-    vfile.write("# from those, I propose to keep one and delete the rest:\n")
+    bash.write(f"# these are duplicates with md5 {md5}\n")
+    for path in all:
+        bash.write(f"# {path}\n")
+
+    bash.write("# from those, I propose to keep one and delete the rest:\n")
     for path in to_delete:
-        vfile.write(f'rm -f "{path}"\n')
-        vfile.write("\n")
+        bash.write(f'rm -f "{path}"\n')
+        bash.write("\n")
 
 
 def main(manifest_path: str) -> str:
