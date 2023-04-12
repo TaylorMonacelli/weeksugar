@@ -115,6 +115,7 @@ def main(args):
     _logger.debug("Starting crazy calculations...")
     bash = lib.main(manifest_path=args.md5_manifest)
     _logger.debug(bash)
+    print(bash)
     # print(f"The {args.n}-th Fibonacci number is {fib(args.n)}")
     _logger.info("Script ends here")
 
