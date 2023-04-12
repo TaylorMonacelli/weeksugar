@@ -79,6 +79,12 @@ def parse_args(args):
         action="store_const",
         const=logging.DEBUG,
     )
+    parser.add_argument(
+        "--md5-manifest",
+        default="/tmp/md5.txt",
+        help="path to md5 manifst",
+        required=False,
+    )
     return parser.parse_args(args)
 
 
@@ -107,7 +113,7 @@ def main(args):
     args = parse_args(args)
     setup_logging(args.loglevel)
     _logger.debug("Starting crazy calculations...")
-    bash = lib.main()
+    bash = lib.main(manifest_path=args.md5_manifest)
     _logger.debug(bash)
     # print(f"The {args.n}-th Fibonacci number is {fib(args.n)}")
     _logger.info("Script ends here")

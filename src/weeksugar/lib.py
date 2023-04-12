@@ -5,18 +5,19 @@ import re
 
 _logger = logging.getLogger(__name__)
 
-md5_manifest = pathlib.Path("/tmp/md5.txt")
 
+def manifest_missing_message(path: str) -> str:
+    msg_md5_manifest_missing = io.StringIO()
+    msg_md5_manifest_missing.write(
+        f"oops, can't find {path}, for now you should do this first:\n"
+    )
+    msg_md5_manifest_missing.write(
+        "find DIRECTORY_PATH -type f -print0 | xargs -0 md5sum >{path}\n"
+    )
+    msg_md5_manifest_missing.write("\n")
+    msg_md5_manifest_missing.write("will fix this later\n")
 
-msg_md5_manifest_missing = io.StringIO()
-msg_md5_manifest_missing.write(
-    f"oops, can't find {md5_manifest}, for now you should do this first:\n"
-)
-msg_md5_manifest_missing.write(
-    "find DIRECTORY_PATH -type f -print0 | xargs -0 md5sum >{md5_manifest}\n"
-)
-msg_md5_manifest_missing.write("\n")
-msg_md5_manifest_missing.write("will fix this later\n")
+    return msg_md5_manifest_missing.getvalue()
 
 
 pat = re.compile(
@@ -39,13 +40,14 @@ def write_bash(md5: str, vfile, to_delete: list[str], all: list[str]):
         vfile.write("\n")
 
 
-def main() -> str:
-    if not md5_manifest.exists():
-        _logger.critical(msg_md5_manifest_missing.getvalue())
+def main(manifest_path: str) -> str:
+    path = pathlib.Path(manifest_path)
+    if not path.exists():
+        _logger.critical(manifest_missing_message(path))
         return ""
 
     dups = {}
-    for line in md5_manifest.read_text().splitlines():
+    for line in path.read_text().splitlines():
         mo = pat.search(line)
         md5 = mo.group("md5sum")
         path = mo.group("path")
